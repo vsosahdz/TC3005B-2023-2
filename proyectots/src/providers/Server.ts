@@ -12,7 +12,8 @@ class Server{
         this.app=express();
         this.port=appInit.port;
         this.env=appInit.env; 
-        this.loadMiddlewares(appInit.middlewares);     
+        this.loadMiddlewares(appInit.middlewares);  
+        this.loadControllers(appInit.controllers);   
     }
 
     private loadMiddlewares(middlewares:any[]):void{
@@ -34,3 +35,5 @@ class Server{
     }
 
 }
+
+export default Server;
