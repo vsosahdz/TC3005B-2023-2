@@ -29,7 +29,7 @@ class Server{
 
     public init(){
         this.app.listen(this.port,()=>{
-            console.log(`Server:Running @'http://localhost:${this.port}'`)
+            console.log(`Server:Running 🚀 @'http://localhost:${this.port}'`)
         })
     }
 
