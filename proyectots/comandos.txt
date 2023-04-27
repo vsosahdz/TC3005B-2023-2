@@ -1,0 +1,21 @@
+MySQL
+mysql -u admin -h <puerta de enlace> -p 
+CREATE DATABASE prueba;
+show schemas;  // Ver las bases de datos
+use prueba   //Para seleccionar una base de datos
+show tables;  //DEsplegar las tablas de la BD
+desc <table>;  //Describe los atributos de la tabla
+
+Typescript
+
+mkdir projectts
+cd projectts
+npm init -y
+npm install -D typescript
+tsc --init
+tsc  -> npm run build
+node -r dotenv/config dist/index.js -> npm run start
+
+
+
+
