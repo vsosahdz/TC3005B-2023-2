@@ -2,6 +2,9 @@ import { Request,Response } from "express";
 import AbstractController from "./AbstractController";
 
 class UserController extends AbstractController{
+    protected validateBody(type: any) {
+        throw new Error("Method not implemented.");
+    }
         
     //Singleton
     private static instance:UserController;

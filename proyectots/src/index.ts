@@ -2,6 +2,7 @@ import Server from "./providers/Server";
 import express from 'express';
 import cors from 'cors';
 import UserController from "./controllers/UserController";
+import AuthenticationController from "./controllers/AuthenticationController";
 
 const servidor = new Server({
     port:8080,
@@ -11,9 +12,19 @@ const servidor = new Server({
         cors()
     ],
     controllers:[
-        UserController.getInstance()
+        UserController.getInstance(),
+        AuthenticationController.getInstance()
     ],
     env:'development'
 });
+
+declare global{
+    namespace Express{
+        interface Request{
+            user:string;
+            token:string;
+        }
+    }
+}
 
 servidor.init();

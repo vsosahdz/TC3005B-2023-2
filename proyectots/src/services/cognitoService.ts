@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { COGNITO_APP_CLIENT_ID,COGNITO_APP_SECRET_HASH,AWS_REGION } from '../config';
+import crypto from 'node:crypto';
 
 type CognitoAttributes = 'email' |'name'|'phone_number';
 
@@ -29,6 +30,19 @@ class CognitoService{
         this.cognitoIdentity = new AWS.CognitoIdentityServiceProvider(this.config)
     }
 
+    //Registro
+    public async signUpUser(email:string,password:string, userAttr:{Name:CognitoAttributes;Value:string}[]){
+        const params={
+            ClientId:this.clientId,
+            Password:password,
+            Username:email,
+            SecretHash:this.hashSecret(email),
+            UserAttributes:userAttr,
+        }
+        
+        return await this.cognitoIdentity.signUp(params).promise();
+    }
+
     //Autenticación
     public async signInUser(email:string,password:string){
         const params={
@@ -37,15 +51,32 @@ class CognitoService{
             AuthParameters:{
                 USERNAME:email,
                 PASSWORD:password,
-                //SECRET_HASH: this.ha
+                SECRET_HASH: this.hashSecret(email)
             }
-        }
+        };
+        return await this.cognitoIdentity.initiateAuth(params).promise();
     }
 
     //Verificación de usuarios
     public async verifyUser(email:string,code:string){
-        
+        const params ={
+            ClientId:this.clientId,
+            ConfirmationCode:code,
+            Username:email,
+            SecretHash: this.hashSecret(email)
+        }
+        return await this.cognitoIdentity.confirmSignUp(params).promise();
     }
+
+    //TODO: funcionalidades necesarias de cognito
+
+    private hashSecret(username:string):string{
+        return crypto
+            .createHmac('SHA256', this.secretHash)
+            .update(username = this.clientId)
+            .digest('base64');
+    }
+
 }
 
 export default CognitoService;
