@@ -73,7 +73,7 @@ class CognitoService{
     private hashSecret(username:string):string{
         return crypto
             .createHmac('SHA256', this.secretHash)
-            .update(username = this.clientId)
+            .update(username + this.clientId)
             .digest('base64');
     }
 
