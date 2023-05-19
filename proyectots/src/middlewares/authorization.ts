@@ -57,7 +57,7 @@ class AuthMiddleware {
 	private async getAWSCognitoPems() {
 		const URL = `https://cognito-idp.${this.poolRegion}.amazonaws.com/${this.userPoolId}/.well-known/jwks.json`;
 		try {
-			/*const response = await fetch(URL);
+			const response = await fetch(URL);
 			
 			if (response.status !== 200) {
 				throw 'COGNITO PEMS ERROR';
@@ -80,7 +80,7 @@ class AuthMiddleware {
 					e: key.e,
 				});
 			});
-			console.log(Object.keys(pems));*/
+			console.log(Object.keys(pems));
 		} catch (error) {
 			console.log('Auth Middleware getAWSCognitoPems() error', error);
 		}
