@@ -19,8 +19,34 @@ class AuthenticationController extends AbstractController{
 
     protected initRoutes(): void {
         this.router.post('/signup',this.signup.bind(this));
-        //this.router.post('/verify',)
-        //this.router.post('/signin',)
+        this.router.post('/verify',this.verify.bind(this));
+        this.router.post('/signin',this.signin.bind(this));
+        this.router.get('/test',this.authMiddleware.verifyToken,this.test.bind(this));
+    }
+
+    private async test(req:Request,res:Response){
+        res.status(200).send("Esto es una prueba de verificación").end();
+    }
+    
+
+    private async signin(req:Request,res:Response){
+        const {email, password} = req.body;
+        try{
+            const login = await this.cognitoService.signInUser(email,password);
+            res.status(200).send({...login.AuthenticationResult});
+        }catch(error:any){
+            res.status(500).send({code:error.code,message:error.message});
+        }
+    }
+
+    private async verify(req:Request,res:Response){
+        const {email,code} = req.body;
+        try{
+            await this.cognitoService.verifyUser(email,code);
+            return res.status(200).send({message:"Correct verification"});
+        }catch(error:any){
+            res.status(500).send({code:error.code,message:error.message});
+        }
     }
 
     private async signup(req:Request,res:Response){
@@ -37,7 +63,7 @@ class AuthenticationController extends AbstractController{
             console.log('cognito user created',user);
             res.status(201).send({message:"User signedUp"})
         }catch(error:any){
-            res.status(500).send({code:error.code,message:error.message})
+            res.status(500).send({code:error.code,message:error.message});
         }
     }
     
