@@ -22,6 +22,15 @@ class AuthenticationController extends AbstractController{
         this.router.post('/verify',this.verify.bind(this));
         this.router.post('/signin',this.signin.bind(this));
         this.router.get('/test',this.authMiddleware.verifyToken,this.test.bind(this));
+        this.router.get('/testTokenRole',
+                        this.authMiddleware.verifyToken,
+                        this.permissionMiddleware.checkIsAdmin,
+                        this.testTokenRole.bind(this)
+                        )
+    }
+
+    private async testTokenRole(req:Request,res:Response){
+        res.status(200).send("Esto es una prueba de verificación de token y Role").end();
     }
 
     private async test(req:Request,res:Response){
@@ -61,6 +70,23 @@ class AuthenticationController extends AbstractController{
                 
             ]);
             console.log('cognito user created',user);
+            //Creación del usuario dentro de la BDNoSQL-DynamoDB
+            await UserModel.create({
+                awsCognitoId:user.UserSub,
+                name,
+                role,
+                email
+            },
+            {overwrite:false});
+            //Creación del usuario dentro de RDS-MySQL
+            await db['User'].create(
+                {
+                    awsCognitoId:user.UserSub,
+                    name,
+                    role,
+                    email
+                }
+            )
             res.status(201).send({message:"User signedUp"})
         }catch(error:any){
             res.status(500).send({code:error.code,message:error.message});
